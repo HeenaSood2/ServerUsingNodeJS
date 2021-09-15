@@ -10,7 +10,7 @@ router.use(bodyParser.json());
 
 
 /* GET users listing. */
-router.get('/',cors.corsWithOptions, authenticate.verifyAdmin ,function(req, res, next) {
+router.get('/',cors.corsWithOptions, /*authenticate.verifyAdmin ,*/ function(req, res, next) {
 	  User.find({})
   .then((users) => {
       res.statusCode = 200;
@@ -77,6 +77,14 @@ router.get('/logout',cors.corsWithOptions, (req, res) => {
 });
 
 
-
+router.get('/facebook/token', passport.authenticate('facebook-token'), (req,res)=>{
+ if(req.user){ //after the faceboook token gets autenticated then it will load the user field to the req object and we can access it by using req.user
+  var token =authenticate.getToken({_id: req.user._id});
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.json({success: true, token: token, status: 'You are successfully logged in!'});
+  
+ } 
+})
   
 module.exports = router;
